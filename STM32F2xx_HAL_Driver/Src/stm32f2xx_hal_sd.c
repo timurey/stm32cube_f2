@@ -2307,8 +2307,11 @@ static void SD_DMAReceiveCplt(DMA_HandleTypeDef *hdma)
     errorstate = SDMMC_CmdStopTransfer(hsd->Instance);
     if(errorstate != HAL_SD_ERROR_NONE)
     {
+      if(errorstate != HAL_SD_ERROR_CMD_CRC_FAIL)
+      {
       hsd->ErrorCode |= errorstate;
       HAL_SD_ErrorCallback(hsd);
+    }
     }
   }
   

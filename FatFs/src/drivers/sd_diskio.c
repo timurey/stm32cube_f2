@@ -126,24 +126,17 @@ DSTATUS SD_status(BYTE lun)
   */
 DRESULT SD_read(BYTE lun, BYTE *buff, DWORD sector, UINT count)
 {
-  DRESULT res = RES_ERROR;
+  DRESULT SD_state = RES_ERROR;
   uint32_t timeout = 100000;
 
-  if(BSP_SD_ReadBlocks((uint32_t*)buff, 
+  SD_state = BSP_SD_ReadBlocks_DMA((uint32_t*)buff, 
                        (uint32_t) (sector), 
-                       count, SD_DATATIMEOUT) == MSD_OK)
-  {
-    while(BSP_SD_GetCardState()!= MSD_OK)
-    {
-      if (timeout-- == 0)
-      {
-        return RES_ERROR;
-      }
-    }
-    res = RES_OK;
-  }
+                       count);
+  while(BSP_SD_GetCardState() != SD_TRANSFER_OK)
+          {
+          }
   
-  return res;
+  return SD_state;
 }
 
 /**
